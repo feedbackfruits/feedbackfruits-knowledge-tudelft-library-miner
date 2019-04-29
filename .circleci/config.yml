@@ -1,0 +1,37 @@
+defaults: &defaults
+  working_directory: ~/feedbackfruits-knowledge-tudelft-library-miner
+  docker:
+    - image: node:10
+      environment:
+        NODE_ENV: test
+
+version: 2
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - node_modules-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+
+      - run:
+          name: Install yarn 1.6.0
+          command: npm install --global yarn@1.6.0
+
+      - run:
+          name: Install dependencies
+          command: yarn install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: node_modules-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+
+      - run: yarn test
+      - run: yarn run coverage
+
+      - store_artifacts:
+          path: coverage
+
