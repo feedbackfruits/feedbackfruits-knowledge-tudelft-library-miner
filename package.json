@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@types/node": "^11.13.8",
+    "oai-pmh": "^2.0.2",
     "typescript": "^3.4.5"
   }
 }
