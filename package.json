@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
+    "clean": "rm -rf dist",
+    "build": "tsc",
+    "prestart": "npm run dist",
+    "start": "node dist",
+    "pretest": "npm run clean && tsc --inlineSourceMap",
     "test": "ava test",
     "coverage": "codecov"
   },
