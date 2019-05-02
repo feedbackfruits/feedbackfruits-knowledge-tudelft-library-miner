@@ -5,7 +5,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "tsc",
-    "prestart": "npm run dist",
+    "prestart": "npm run build",
     "start": "node dist",
     "pretest": "npm run clean && tsc --inlineSourceMap",
     "test": "ava test",
@@ -19,7 +19,10 @@
     "nyc": "^14.0.0"
   },
   "dependencies": {
+    "@reactivex/rxjs": "^5.4.3",
     "@types/node": "^11.13.8",
+    "feedbackfruits-knowledge-engine": "github:feedbackfruits/feedbackfruits-knowledge-engine#^1.4.4",
+    "memux": "github:knowledge-express/memux#~0.4.2",
     "oai-pmh": "^2.0.2",
     "typescript": "^3.4.5"
   }

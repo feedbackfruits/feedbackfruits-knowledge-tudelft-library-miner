@@ -1,69 +1,47 @@
-import { OaiPmh } from 'oai-pmh'
+import * as Config from './config';
+import { mine } from './miner';
 
-const url = `http://oai.tudelft.nl/ir`;
+import { Miner, Config as _Config } from 'feedbackfruits-knowledge-engine';
 
-export type Observerable = {
-  next,
-  error,
-  complete,
+export default async function init({ name }) {
+  const send = await Miner({
+    name,
+    customConfig: Config as typeof _Config.Base
+  });
+
+  console.log('Starting TUDelft Library miner...');
+  const docs = mine();
+
+  let count = 0;
+  await new Promise((resolve, reject) => {
+    docs.subscribe({
+      next: async (doc) => {
+        count++;
+        console.log(`Sending doc number ${count}:`, doc['@id']);
+        const result = await send({ action: 'write', key: doc['@id'], data: doc });
+        return result;
+      },
+      error: (reason) => {
+        console.log('Miner crashed...');
+        console.error(reason);
+        reject(reason);
+      },
+      complete: () => {
+        console.log('Miner completed');
+        resolve();
+      }
+    });
+  });
+
+  console.log(`Mined ${count} docs from TUDelft Library`);
+  return;
 }
 
-async function doThings(url) {
-  const oaiPmh = new OaiPmh(url)
-  const identifierIterator = oaiPmh.listRecords({
-    metadataPrefix: 'oai_dc',
-    // ignore_deleted: true
-    // from: '2015-01-01',
-    // until: '2015-01-04'
-  })
-
-  for await (const identifier of identifierIterator) {
-    console.log(identifier)
-
-    // Do some processing
-
-    // Get PDF
-
-    // Extract dates
-
-    // Do some queries
-
-    // const georgiaResource: GeorgiaResource = {
-    //
-    // }
-    //
-    // await observerable.next(mapResource(georgiaResource));
-  }
-
-  // return observerable;
-}
-
-doThings(url).catch(console.error)
-
-
-export type GeorgiaResource = {
-  id: string,
-  url: string,
-  quality: number
-}
-
-export type SchemaResource = {
-  id: string,
-  encoding: {
-    id: string
-    contentUrl: string
-    encodesCreativeWork: string
-  }
-}
-
-export function mapResource(resource: GeorgiaResource): SchemaResource {
-  const { id, url, quality } = resource;
-  return {
-    id,
-    encoding: {
-      id: url,
-      contentUrl: url,
-      encodesCreativeWork: id
-    }
-  };
+// Start the server when executed directly
+declare const require: any;
+if (require.main === module) {
+  console.log("Running as script.");
+  init({
+    name: Config.NAME,
+  }).catch(console.error);
 }
