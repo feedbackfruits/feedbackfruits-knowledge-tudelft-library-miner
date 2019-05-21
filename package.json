@@ -17,7 +17,7 @@
     "ava": "^1.4.1",
     "codecov": "^3.3.0",
     "nyc": "^14.0.0"
-  },
+  },  
   "dependencies": {
     "@types/node": "^11.13.8",
     "oai-pmh": "^2.0.2",
