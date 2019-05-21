@@ -1,23 +1,8 @@
 // Import package that allows meta-data harvesting according to the OAI protocol
 import { OaiPmh } from 'oai-pmh'
 
-export type metadataList = {
-  title: String,
-  url: String,
-  license: String,
-  topics : String,
-  creationDate: String,
-  length : Number,
-  educationalLevel: String,
-  author: String,
-  contributors: String,
-  organization: String,
-}
-
 var i = 0;
-
 var myArray = ['master thesis', 'bachelor thesis', 'doctoral thesis', 'journal article','review','conference paper','book','book chapter','public lecture'];
-
 const url = 'http://oai.tudelft.nl/ir';
 
 function getMetadata(item, index){
