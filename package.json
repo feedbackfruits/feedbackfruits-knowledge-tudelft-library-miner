@@ -17,10 +17,16 @@
     "ava": "^1.4.1",
     "codecov": "^3.3.0",
     "nyc": "^14.0.0"
-  },  
+  },
   "dependencies": {
+    "@reactivex/rxjs": "5.4.3",
     "@types/node": "^11.13.8",
+    "download-pdf": "^0.1.6",
+    "feedbackfruits-knowledge-engine": "github:feedbackfruits/feedbackfruits-knowledge-engine#^1.4.4",
+    "fs": "^0.0.1-security",
     "oai-pmh": "^2.0.2",
-    "typescript": "^3.4.5"
+    "pdf-parse": "^1.1.1",
+    "typescript": "^3.4.5",
+    "url-exists": "^1.0.3"
   }
 }
