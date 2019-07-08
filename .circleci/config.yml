@@ -41,7 +41,9 @@ jobs:
       - store_artifacts:
           path: coverage
   deploy-branch:
-    <<: *defaults
+    working_directory: ~/feedbackfruits-knowledge-tudelft-library-miner
+    machine:
+      enabled: true
     steps:
       - checkout
       - run:
@@ -56,11 +58,13 @@ jobs:
           name: Deploy to Heroku
           command: |
             heroku config:add GIT_TAG=`git describe --tags --always` --app staging-fbf-know-tud-lib-miner
-            git push git@heroku.com:staging-fbf-know-tud-lib-miner.git $CIRCLE_SHA1:refs/heads/master -f
+            git push https://git.heroku.com/staging-fbf-know-tud-lib-miner.git $CIRCLE_SHA1:refs/heads/master -f
             heroku ps:scale web=0 -a staging-fbf-know-tud-lib-miner
             heroku run:detached yarn start -a staging-fbf-know-tud-lib-miner
   deploy-tag:
-    <<: *defaults
+    working_directory: ~/feedbackfruits-knowledge-tudelft-library-miner
+    machine:
+      enabled: true
     steps:
       - checkout
       - run:
@@ -75,7 +79,7 @@ jobs:
           name: Deploy to Heroku
           command: |
             heroku config:add GIT_TAG=`git describe --tags --always` --app fbf-knowledge-tud-lib-miner
-            git push git@heroku.com:fbf-knowledge-tud-lib-miner.git $CIRCLE_SHA1:refs/heads/master -f
+            git push https://git.heroku.com/staging-fbf-know-tud-lib-miner.git $CIRCLE_SHA1:refs/heads/master -f
             heroku ps:scale web=0 -a fbf-knowledge-tud-lib-miner
             heroku run:detached yarn start -a fbf-knowledge-tud-lib-miner
 
