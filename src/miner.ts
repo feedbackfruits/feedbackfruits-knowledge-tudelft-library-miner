@@ -17,9 +17,16 @@ export function mine(): Observable<Doc> {
       csvStream.on('data', async (row)=>{
         csvStream.pause();
         console.log("Resource ",i);
-        const resource = await mapRecord(row);
-        if (resource != null) observer.next(resource);
-        i++;
+        try {
+          const resource = await mapRecord(row);
+          if (resource != null) {
+            observer.next(resource);
+            i++;
+          }
+        } catch(err) {
+          console.error(err);
+          throw err;
+        }
         csvStream.resume();
       });
       csvStream.on('error',(error)=>{
@@ -36,30 +43,59 @@ export function mine(): Observable<Doc> {
   });
 }
 
-// TODO: @Georgia: Expand this as needed to test data that is sent over the bus contains all the required properties.
-// Try commenting in the title below and see how the test fails after that and can be fixed by checking the title in the test.
-// Then add all the other missing properties here and in the test to complete the miner.
+function parseAuthors(authorString: string): string[] {
+  return authorString.split(" (author),").map(author => {
+    return author.replace(" (author)", "");
+  });
+}
+
+function dateToISO8601(dateString): string {
+  const parts = dateString.split('-');
+
+  let newDateString;
+  if (parts.length === 1) {
+    // Only year
+    const year = parseInt(parts[0]) < 30 ? `20${parts[0]}` : `19${parts[0]}`;
+    newDateString = year;
+  } else if (parts.length === 2) {
+    // const year = parseInt(parts[1]) < 30 ? `20${parts[1]}` : `19${parts[1]}`;
+    newDateString = dateString;
+  } else if (parts.length === 3) {
+    if (parts[0].length === 4) newDateString = dateString;
+    else {
+      const year = parseInt(parts[2]) < 30 ? `20${parts[2]}` : `19${parts[2]}`;
+      newDateString = `${year}-${parts[1]}-${parts[0]}`;
+    }
+  } else {
+    throw new Error(`Unknown date format: ${dateString}`);
+  }
+
+  console.log('Mapping date from:', parts, " to ", newDateString);
+  const date = new Date(newDateString);
+  return date.toISOString();
+}
+
 async function mapRecord(record) {
   if (record.existence === "yes"){
     return {
-      "@id": record.url,
+      "@id": record.downloadUrl,
       "@type": [
            "Resource", "Document"
        ],
-       "title": record.title,
-       "language": record.language,
-       "copyrights": record.license,
-       "abstract": record.abstract,
-       "author": record.author,
-       "organization": record.organization,
-       "contributors": record.contributors,
-       "subjectTopics": record.subjects,
-       "NumberOfTopics": record.numOfTopics,
-       "EducationalLevel" : record.educationLevel,
-       "Type": record.type,
-       "DownloadUrl" : record.downloadUrl,
-       "CreationDate" : record.creationDate,
-       "Length" : record.length
+       "name": record.title,
+       "description": record.abstract,
+       "sourceOrganization": "http://repository.tudelft.nl",
+       "license": record.license,
+       "inLanguage": record.language,
+       "topic" : record.url,
+       ...(record.author !== "Undetermined, U. (author)" ? { "author": parseAuthors(record.author) } : {}),
+
+       // "contributor": record.contributors,
+       "learningResourceType": record.type,
+       // "contentLength" : record.length,
+
+       ...(record.subjects.length > 0 ? { "keywords": record.subjects.split(',') } : {}),
+       ...(record.creationDate.length > 0 ? { "dateCreated" : dateToISO8601(record.creationDate) } : {}),
        };
   }
   else{

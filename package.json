@@ -22,7 +22,7 @@
     "@reactivex/rxjs": "5.4.3",
     "@types/node": "^11.13.8",
     "fast-csv": "^3.0.1",
-    "feedbackfruits-knowledge-engine": "github:feedbackfruits/feedbackfruits-knowledge-engine#^1.4.4",
+    "feedbackfruits-knowledge-engine": "github:feedbackfruits/feedbackfruits-knowledge-engine#feature/semantic-search-results",
     "fs": "^0.0.1-security",
     "typescript": "^3.4.5"
   }
