@@ -1,4 +1,4 @@
-import { Observable } from '@reactivex/rxjs';
+import { Observable } from 'rxjs';
 import { Doc } from 'feedbackfruits-knowledge-engine';
 const fs = require('fs');
 const fastcsv = require('fast-csv');
